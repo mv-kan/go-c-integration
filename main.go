@@ -3,6 +3,7 @@ package main
 // #cgo CFLAGS: -I./c
 // #cgo LDFLAGS: -L./c -lperson -Wl,-rpath=./c
 // #include "./c/person.h"
+// // or instead of linking shared object you can #include "./c/person.c"
 // #include <stdlib.h>
 import "C"
 import (
@@ -33,9 +34,11 @@ func (p *Person) IsMale() bool {
 }
 
 func (p *Person) IsAdult() bool {
+	cstr := C.CString(p.Sex)
+	defer C.free(unsafe.Pointer(cstr))
 	cperson := C.struct_person{
 		age: C.int(p.Age),
-		sex: C.CString(p.Sex),
+		sex: cstr,
 	}
 
 	result := C.person_is_adult(cperson)
@@ -48,7 +51,6 @@ func (p *Person) IsAdult() bool {
 }
 
 func main() {
-	fmt.Println("Hello world")
 	p := Person{
 		Age: 20,
 		Sex: "female",
@@ -57,5 +59,13 @@ func main() {
 	fmt.Printf("C calls results\n")
 	fmt.Printf("Is Adult? %t\n", p.IsAdult())
 	fmt.Printf("Is Male? %t\n", p.IsMale())
-
+	fmt.Println()
+	p = Person{
+		Age: 10,
+		Sex: "male",
+	}
+	fmt.Printf("Person2 age=%d sex=%s\n", p.Age, p.Sex)
+	fmt.Printf("C calls results\n")
+	fmt.Printf("Is Adult? %t\n", p.IsAdult())
+	fmt.Printf("Is Male? %t\n", p.IsMale())
 }
