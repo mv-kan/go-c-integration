@@ -1,7 +1,7 @@
 package main
 
-// #cgo CFLAGS: -I./c
-// #cgo LDFLAGS: -L./c -lperson -Wl,-rpath=./c
+// #cgo CFLAGS: -I${SRCDIR}/c
+// #cgo LDFLAGS: -L${SRCDIR}/c -lperson -Wl,-rpath=${SRCDIR}/c
 // #include "./c/person.h"
 // // or instead of linking shared object you can #include "./c/person.c"
 // #include <stdlib.h>
